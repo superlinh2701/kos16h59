@@ -1,37 +1,35 @@
 const tileSize = 32;
 
 /*
-MAP 30 x 15
-- Viền ngoài: tường
-- 3 dãy bàn ngang
-- Phòng họp bên phải
-- Tủ ở góc trái trên
+0 = sàn
+1 = tường
+2 = bàn
+3 = tủ (tương tác)
 */
 
 const map = [
-  // 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,1,1,1,1,1,1,1,1,1],
+  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 ];
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 canvas.width = map[0].length * tileSize;
-canvas.height = map.length * tileSize;
+canvas.height = map.length * tileSize + 40; // chừa chỗ cho text
 
 const player = {
   x: 2 * tileSize,
@@ -42,6 +40,7 @@ const player = {
 
 const keys = {};
 let interactPressed = false;
+let message = "";
 
 window.addEventListener("keydown", e => {
   keys[e.key] = true;
@@ -71,17 +70,29 @@ function isWall(x, y) {
     map[bottom][right]
   ];
 
-  // 1 = tường, 2 = bàn, 3 = tủ (đều chặn)
   return tiles.some(t => t === 1 || t === 2 || t === 3);
 }
 
+// 🔍 kiểm tra ô xung quanh
 function checkInteraction() {
-  const cx = Math.floor((player.x + player.size / 2) / tileSize);
-  const cy = Math.floor((player.y + player.size / 2) / tileSize);
+  const px = Math.floor((player.x + player.size / 2) / tileSize);
+  const py = Math.floor((player.y + player.size / 2) / tileSize);
 
-  if (map[cy][cx] === 3 && interactPressed) {
-    console.log("📁 Bạn mở tủ tài liệu.");
+  const around = [
+    [px + 1, py],
+    [px - 1, py],
+    [px, py + 1],
+    [px, py - 1],
+  ];
+
+  for (let [x, y] of around) {
+    if (map[y] && map[y][x] === 3 && interactPressed) {
+      message = "📁 Bạn mở tủ và tìm thấy tài liệu!";
+      return;
+    }
   }
+
+  message = "";
 }
 
 function update() {
@@ -102,11 +113,10 @@ function update() {
 function drawMap() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
-      let color = "#e5e5e5"; // sàn văn phòng
-
-      if (map[y][x] === 1) color = "#9e9e9e"; // tường
-      if (map[y][x] === 2) color = "#b07d4f"; // bàn
-      if (map[y][x] === 3) color = "#6d4c41"; // tủ
+      let color = "#BABABA";
+      if (map[y][x] === 1) color = "#ffffff";
+      if (map[y][x] === 2) color = "#D0B99B";
+      if (map[y][x] === 3) color = "#9D9AB6";
 
       ctx.fillStyle = color;
       ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
@@ -117,12 +127,28 @@ function drawMap() {
   }
 }
 
+function drawUI() {
+  ctx.fillStyle = "#111";
+  ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+
+  ctx.fillStyle = "#fff";
+  ctx.font = "14px sans-serif";
+  ctx.fillText("← ↑ ↓ → : Di chuyển    |    E : Tương tác", 10, canvas.height - 14);
+
+  if (message) {
+    ctx.fillStyle = "#ffd54f";
+    ctx.fillText(message, 10, canvas.height - 24);
+  }
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawMap();
 
   ctx.fillStyle = "#4caf50";
   ctx.fillRect(player.x, player.y, player.size, player.size);
+
+  drawUI();
 }
 
 function gameLoop() {
