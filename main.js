@@ -28,8 +28,10 @@ const map = [
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+const UI_HEIGHT = 60;
+
 canvas.width = map[0].length * tileSize;
-canvas.height = map.length * tileSize + 40; // chừa chỗ cho text
+canvas.height = map.length * tileSize + UI_HEIGHT;
 
 const player = {
   x: 2 * tileSize,
@@ -39,17 +41,19 @@ const player = {
 };
 
 const keys = {};
-let interactPressed = false;
-let message = "";
+let message = "Hãy khám phá văn phòng...";
+let lastInteraction = "";
 
 window.addEventListener("keydown", e => {
   keys[e.key] = true;
-  if (e.key === "e" || e.key === "E") interactPressed = true;
+
+  if (e.key === "e" || e.key === "E") {
+    interact();
+  }
 });
 
 window.addEventListener("keyup", e => {
   keys[e.key] = false;
-  if (e.key === "e" || e.key === "E") interactPressed = false;
 });
 
 function isWall(x, y) {
@@ -73,8 +77,8 @@ function isWall(x, y) {
   return tiles.some(t => t === 1 || t === 2 || t === 3);
 }
 
-// 🔍 kiểm tra ô xung quanh
-function checkInteraction() {
+// 🔍 Kiểm tra tương tác
+function interact() {
   const px = Math.floor((player.x + player.size / 2) / tileSize);
   const py = Math.floor((player.y + player.size / 2) / tileSize);
 
@@ -86,13 +90,13 @@ function checkInteraction() {
   ];
 
   for (let [x, y] of around) {
-    if (map[y] && map[y][x] === 3 && interactPressed) {
-      message = "📁 Bạn mở tủ và tìm thấy tài liệu!";
+    if (map[y] && map[y][x] === 3) {
+      message = "📁 Bạn mở tủ và tìm thấy tài liệu quan trọng!";
       return;
     }
   }
 
-  message = "";
+  message = "Không có gì để tương tác ở đây.";
 }
 
 function update() {
@@ -106,21 +110,18 @@ function update() {
 
   if (!isWall(nextX, player.y)) player.x = nextX;
   if (!isWall(player.x, nextY)) player.y = nextY;
-
-  checkInteraction();
 }
 
 function drawMap() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
-      let color = "#BABABA";
-      if (map[y][x] === 1) color = "#ffffff";
-      if (map[y][x] === 2) color = "#E9D5B3";
-      if (map[y][x] === 3) color = "#9D9AB6";
+      let color = "#EAEAEA";
+      if (map[y][x] === 1) color = "#FFFFFF";
+      if (map[y][x] === 2) color = "#E6C9A8";
+      if (map[y][x] === 3) color = "#A89CC8";
 
       ctx.fillStyle = color;
       ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-
       ctx.strokeStyle = "rgba(0,0,0,0.1)";
       ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
     }
@@ -128,17 +129,23 @@ function drawMap() {
 }
 
 function drawUI() {
-  ctx.fillStyle = "#111";
-  ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+  const y = canvas.height - UI_HEIGHT;
 
-  ctx.fillStyle = "#fff";
+  // background
+  ctx.fillStyle = "#1e1e1e";
+  ctx.fillRect(0, y, canvas.width, UI_HEIGHT);
+
+  // left: message
+  ctx.fillStyle = "#ffd54f";
   ctx.font = "14px sans-serif";
-  ctx.fillText("← ↑ ↓ → : Di chuyển    |    E : Tương tác", 10, canvas.height - 14);
+  ctx.fillText(message, 12, y + 25);
 
-  if (message) {
-    ctx.fillStyle = "#ffd54f";
-    ctx.fillText(message, 10, canvas.height - 24);
-  }
+  // right: controls
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "right";
+  ctx.fillText("← ↑ ↓ → Di chuyển", canvas.width - 10, y + 20);
+  ctx.fillText("E : Tương tác", canvas.width - 10, y + 40);
+  ctx.textAlign = "left";
 }
 
 function draw() {
