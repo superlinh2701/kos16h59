@@ -1,5 +1,13 @@
 const tileSize = 32;
 
+const TILE = {
+  FLOOR: { x: 0, y: 0 },
+  WALL_TOP: { x: 32, y: 0 },
+  DESK: { x: 0, y: 32 },
+  WALL: { x: 32, y: 32 }
+};
+
+
 const floorTile = new Image();
 floorTile.src = "assets/tileset.png";
 
@@ -10,7 +18,7 @@ floorTile.src = "assets/tileset.png";
 3 = tủ (tương tác)
 */
 
-const map = [
+const collisionMap = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   [1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -24,6 +32,11 @@ const map = [
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 ];
+
+const decorMap = collisionMap.map(row =>
+  row.map(cell => (cell === 1 ? 1 : 0))
+);
+
 
 
 const canvas = document.getElementById("game");
@@ -80,21 +93,21 @@ function isWall(x, y) {
   const bottom = Math.floor((y + player.size - 1) / tileSize);
 
   if (
-    top < 0 || bottom >= map.length ||
-    left < 0 || right >= map[0].length
+    top < 0 || bottom >= collisionMap.length ||
+    left < 0 || right >= collisionMap[0].length
   ) return true;
 
   const tiles = [
-    map[top][left],
-    map[top][right],
-    map[bottom][left],
-    map[bottom][right]
+    collisionMap[top][left],
+    collisionMap[top][right],
+    collisionMap[bottom][left],
+    collisionMap[bottom][right]
   ];
 
-  // va chạm map
-  if (tiles.some(t => t === 1 || t === 2 || t === 3)) return true;
+  // 1 & 3 là vật cản
+  if (tiles.some(t => t === 1 || t === 3)) return true;
 
-  // va chạm NPC
+  // NPC collision
   for (let npc of npcs) {
     const overlap =
       x < npc.x + npc.width &&
@@ -107,6 +120,7 @@ function isWall(x, y) {
 
   return false;
 }
+
 
 
 // 🔍 Kiểm tra tương tác
@@ -158,43 +172,50 @@ function update() {
 }
 
 function drawMap() {
-  for (let y = 0; y < map.length; y++) {
-    for (let x = 0; x < map[y].length; x++) {
+  for (let y = 0; y < collisionMap.length; y++) {
+    for (let x = 0; x < collisionMap[y].length; x++) {
 
       const px = x * tileSize;
       const py = y * tileSize;
 
-      // ===== FLOOR =====
-      if (map[y][x] === 0) {
+      // FLOOR
+      ctx.drawImage(
+        floorTile,
+        TILE.FLOOR.x, TILE.FLOOR.y, 32, 32,
+        px, py, 32, 32
+      );
+
+      // DESK
+      if (collisionMap[y][x] === 2) {
         ctx.drawImage(
           floorTile,
-          0, 0, tileSize, tileSize, // nguồn ảnh
-          px, py, tileSize, tileSize // vị trí vẽ
+          TILE.DESK.x, TILE.DESK.y, 32, 32,
+          px, py, 32, 32
         );
-        continue;
       }
 
-      // ===== WALL =====
-      if (map[y][x] === 1) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(px, py, tileSize, tileSize);
+      // WALL BASE
+      if (collisionMap[y][x] === 1) {
+        ctx.drawImage(
+          floorTile,
+          TILE.WALL.x, TILE.WALL.y, 32, 32,
+          px, py, 32, 32
+        );
       }
+    }
+  }
+}
 
-      // ===== DESK =====
-      if (map[y][x] === 2) {
-        ctx.fillStyle = "#E6C9A8";
-        ctx.fillRect(px, py, tileSize, tileSize);
+function drawWallTop() {
+  for (let y = 0; y < decorMap.length; y++) {
+    for (let x = 0; x < decorMap[y].length; x++) {
+      if (decorMap[y][x] === 1) {
+        ctx.drawImage(
+          floorTile,
+          TILE.WALL_TOP.x, TILE.WALL_TOP.y, 32, 32,
+          x * 32, y * 32, 32, 32
+        );
       }
-
-      // ===== CABINET =====
-      if (map[y][x] === 3) {
-        ctx.fillStyle = "#A89CC8";
-        ctx.fillRect(px, py, tileSize, tileSize);
-      }
-
-      // viền nhẹ
-      ctx.strokeStyle = "rgba(0,0,0,0.1)";
-      ctx.strokeRect(px, py, tileSize, tileSize);
     }
   }
 }
@@ -247,15 +268,21 @@ function wrapText(text, x, y, maxWidth, lineHeight) {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawMap();
+drawMap();
 
-  ctx.fillStyle = "#4caf50";
-  ctx.fillRect(player.x, player.y, player.size, player.size);
+ctx.fillStyle = "#4caf50";
+ctx.fillRect(player.x, player.y, player.size, player.size);
+
 for (let npc of npcs) {
   ctx.fillStyle = "#4FC3F7";
   ctx.fillRect(npc.x, npc.y, npc.width, npc.height);
 }
-  drawUI();
+
+// vẽ tường trên cùng
+drawWallTop();
+
+drawUI();
+
 }
 
 function gameLoop() {
