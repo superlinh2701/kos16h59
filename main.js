@@ -115,7 +115,7 @@ function drawMap() {
     for (let x = 0; x < map[y].length; x++) {
       let color = "#BABABA";
       if (map[y][x] === 1) color = "#ffffff";
-      if (map[y][x] === 2) color = "#D0B99B";
+      if (map[y][x] === 2) color = "#E9D5B3";
       if (map[y][x] === 3) color = "#9D9AB6";
 
       ctx.fillStyle = color;
