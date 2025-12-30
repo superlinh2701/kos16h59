@@ -1,10 +1,12 @@
+
+
 const tileSize = 32;
 
 /*
 0 = sàn
 1 = tường
 2 = bàn
-3 = tủ
+3 = tủ (tương tác)
 */
 
 const map = [
@@ -27,12 +29,12 @@ const map = [
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+
 const UI_HEIGHT = 60;
 
 canvas.width = map[0].length * tileSize;
 canvas.height = map.length * tileSize + UI_HEIGHT;
 
-// ================= PLAYER =================
 const player = {
   x: 2 * tileSize,
   y: 2 * tileSize,
@@ -40,23 +42,25 @@ const player = {
   speed: 2
 };
 
-// ================= NPC =================
 const npcs = [
   {
     x: 14 * tileSize,
     y: 2 * tileSize,
-    size: 20,
+    width: 20,
+    height: 20,
     dialog: [
       "👋 Hello!",
-      "Bạn cần giúp gì không?"
+      "Bạn cần giúp gì không?",
+      "Tôi đang hơi bận nhưng vẫn nói chuyện được 😄"
     ],
     dialogIndex: 0
   }
 ];
 
+
 const keys = {};
 let message = "Hãy khám phá văn phòng...";
-let activeNPC = null;
+let lastInteraction = "";
 
 window.addEventListener("keydown", e => {
   keys[e.key] = true;
@@ -88,20 +92,49 @@ function isWall(x, y) {
     map[bottom][right]
   ];
 
-  return tiles.some(t => t === 1 || t === 2 || t === 3);
+  // va chạm map
+  if (tiles.some(t => t === 1 || t === 2 || t === 3)) return true;
+
+  // va chạm NPC
+  for (let npc of npcs) {
+    const overlap =
+      x < npc.x + npc.width &&
+      x + player.size > npc.x &&
+      y < npc.y + npc.height &&
+      y + player.size > npc.y;
+
+    if (overlap) return true;
+  }
+
+  return false;
 }
 
-// ======= INTERACTION =======
-function interact() {
-  const px = player.x + player.size / 2;
-  const py = player.y + player.size / 2;
 
-  for (let npc of npcs) {
-    const dx = Math.abs(px - (npc.x + npc.size / 2));
-    const dy = Math.abs(py - (npc.y + npc.size / 2));
+// 🔍 Kiểm tra tương tác
+function interact() {
+  const px = Math.floor((player.x + player.size / 2) / tileSize);
+  const py = Math.floor((player.y + player.size / 2) / tileSize);
+
+  const around = [
+    [px + 1, py],
+    [px - 1, py],
+    [px, py + 1],
+    [px, py - 1],
+  ];
+
+  for (let [x, y] of around) {
+    if (!map[y]) continue;
+
+    if (map[y][x] === 3) {
+      message = "📁 Bạn mở tủ và tìm thấy tài liệu!";
+      return;
+    }
+  }
+    for (let npc of npcs) {
+    const dx = Math.abs((player.x + player.size / 2) - (npc.x + npc.width / 2));
+    const dy = Math.abs((player.y + player.size / 2) - (npc.y + npc.height / 2));
 
     if (dx < tileSize && dy < tileSize) {
-      activeNPC = npc;
       message = npc.dialog[npc.dialogIndex];
       npc.dialogIndex = (npc.dialogIndex + 1) % npc.dialog.length;
       return;
@@ -111,7 +144,7 @@ function interact() {
   message = "Không có gì để tương tác.";
 }
 
-// ======= UPDATE =======
+
 function update() {
   let nextX = player.x;
   let nextY = player.y;
@@ -125,7 +158,6 @@ function update() {
   if (!isWall(player.x, nextY)) player.y = nextY;
 }
 
-// ======= DRAW =======
 function drawMap() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
@@ -142,24 +174,20 @@ function drawMap() {
   }
 }
 
-function drawNPCs() {
-  for (let npc of npcs) {
-    ctx.fillStyle = "#4FC3F7";
-    ctx.fillRect(npc.x, npc.y, npc.size, npc.size);
-  }
-}
-
 function drawUI() {
   const y = canvas.height - UI_HEIGHT;
 
+  // background
   ctx.fillStyle = "#1e1e1e";
   ctx.fillRect(0, y, canvas.width, UI_HEIGHT);
 
+  // left: message
   ctx.fillStyle = "#ffd54f";
   ctx.font = "14px sans-serif";
   ctx.fillText(message, 12, y + 25);
 
-  ctx.fillStyle = "#fff";
+  // right: controls
+  ctx.fillStyle = "#ffffff";
   ctx.textAlign = "right";
   ctx.fillText("← ↑ ↓ → Di chuyển", canvas.width - 10, y + 20);
   ctx.fillText("E : Tương tác", canvas.width - 10, y + 40);
@@ -169,11 +197,13 @@ function drawUI() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawMap();
-  drawNPCs();
 
   ctx.fillStyle = "#4caf50";
   ctx.fillRect(player.x, player.y, player.size, player.size);
-
+for (let npc of npcs) {
+  ctx.fillStyle = "#4FC3F7";
+  ctx.fillRect(npc.x, npc.y, npc.width, npc.height);
+}
   drawUI();
 }
 
