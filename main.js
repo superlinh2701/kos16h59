@@ -1,30 +1,31 @@
+const tileSize = 32;
+
+/*
+MAP 30 x 15
+- Viền ngoài: tường
+- 3 dãy bàn ngang
+- Phòng họp bên phải
+- Tủ ở góc trái trên
+*/
+
 const map = [
-  // 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-
-  // BÀN 1
-  [1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-
-  // BÀN 2
-  [1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-
-  // BÀN 3
-  [1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-
-  // LỐI ĐI
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-
-  // PHÒNG HỌP
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 1],
-
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  // 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
-
-
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -39,21 +40,18 @@ const player = {
   speed: 2
 };
 
-
 const keys = {};
+let interactPressed = false;
 
-window.addEventListener("keydown", e => keys[e.key] = true);
-window.addEventListener("keyup", e => keys[e.key] = false);
+window.addEventListener("keydown", e => {
+  keys[e.key] = true;
+  if (e.key === "e" || e.key === "E") interactPressed = true;
+});
 
-function getTileColor(tile) {
-  switch (tile) {
-    case 1: return "#444";      // tường
-    case 2: return "#6b4f2c";   // bàn
-    case 3: return "#8d6e63";   // tủ
-    case 4: return "#3a3a3a";   // tường phòng họp
-    default: return "#2a2a2a";  // sàn
-  }
-}
+window.addEventListener("keyup", e => {
+  keys[e.key] = false;
+  if (e.key === "e" || e.key === "E") interactPressed = false;
+});
 
 function isWall(x, y) {
   const left = Math.floor(x / tileSize);
@@ -61,43 +59,30 @@ function isWall(x, y) {
   const top = Math.floor(y / tileSize);
   const bottom = Math.floor((y + player.size - 1) / tileSize);
 
-  const blocks = [1, 2, 4]; // tường, bàn, phòng họp
-
   if (
     top < 0 || bottom >= map.length ||
     left < 0 || right >= map[0].length
   ) return true;
 
-  return (
-    blocks.includes(map[top][left]) ||
-    blocks.includes(map[top][right]) ||
-    blocks.includes(map[bottom][left]) ||
-    blocks.includes(map[bottom][right])
-  );
+  const tiles = [
+    map[top][left],
+    map[top][right],
+    map[bottom][left],
+    map[bottom][right]
+  ];
+
+  // 1 = tường, 2 = bàn, 3 = tủ (đều chặn)
+  return tiles.some(t => t === 1 || t === 2 || t === 3);
 }
 
-function isNearCabinet() {
-  const px = Math.floor(player.x / tileSize);
-  const py = Math.floor(player.y / tileSize);
+function checkInteraction() {
+  const cx = Math.floor((player.x + player.size / 2) / tileSize);
+  const cy = Math.floor((player.y + player.size / 2) / tileSize);
 
-  for (let dy = -1; dy <= 1; dy++) {
-    for (let dx = -1; dx <= 1; dx++) {
-      if (map[py + dy]?.[px + dx] === 3) {
-        return true;
-      }
-    }
+  if (map[cy][cx] === 3 && interactPressed) {
+    console.log("📁 Bạn mở tủ tài liệu.");
   }
-  return false;
 }
-
-window.addEventListener("keydown", (e) => {
-  if (e.key === "e" || e.key === "E") {
-    if (isNearCabinet()) {
-      alert("Bạn mở tủ và tìm thấy tài liệu!");
-    }
-  }
-});
-
 
 function update() {
   let nextX = player.x;
@@ -110,24 +95,32 @@ function update() {
 
   if (!isWall(nextX, player.y)) player.x = nextX;
   if (!isWall(player.x, nextY)) player.y = nextY;
+
+  checkInteraction();
 }
 
 function drawMap() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
-      ctx.fillStyle = getTileColor(map[y][x]);
+      let color = "#e5e5e5"; // sàn văn phòng
+
+      if (map[y][x] === 1) color = "#9e9e9e"; // tường
+      if (map[y][x] === 2) color = "#b07d4f"; // bàn
+      if (map[y][x] === 3) color = "#6d4c41"; // tủ
+
+      ctx.fillStyle = color;
       ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
 
-      ctx.strokeStyle = "rgba(255,255,255,0.05)";
+      ctx.strokeStyle = "rgba(0,0,0,0.1)";
       ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
     }
   }
 }
 
-
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawMap();
+
   ctx.fillStyle = "#4caf50";
   ctx.fillRect(player.x, player.y, player.size, player.size);
 }
