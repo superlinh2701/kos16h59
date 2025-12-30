@@ -1,5 +1,3 @@
-
-
 const tileSize = 32;
 
 const floorTile = new Image();
