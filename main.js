@@ -16,8 +16,8 @@ const ctx = canvas.getContext("2d");
 
 // Player
 const player = {
-  x: 300,
-  y: 160,
+  x: 2 * tileSize,
+  y: 2 * tileSize,
   size: 20,
   speed: 2
 };
