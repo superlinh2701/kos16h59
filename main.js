@@ -2,6 +2,9 @@
 
 const tileSize = 32;
 
+const floorTile = new Image();
+floorTile.src = "assets/tileset.png";
+
 /*
 0 = sàn
 1 = tường
@@ -15,7 +18,7 @@ const map = [
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,2,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,2,0,0,1],
   [1,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,1,0,0,2,2,0,0,1],
   [1,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,1,0,0,2,2,0,0,1],
@@ -27,9 +30,6 @@ const map = [
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-
-const tileset = new Image();
-tileset.src = "tileset.png";
 
 const UI_HEIGHT = 110;
 
@@ -162,7 +162,41 @@ function update() {
 function drawMap() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
-      drawTile(map[y][x], x, y);
+
+      const px = x * tileSize;
+      const py = y * tileSize;
+
+      // ===== FLOOR =====
+      if (map[y][x] === 0) {
+        ctx.drawImage(
+          floorTile,
+          0, 0, tileSize, tileSize, // nguồn ảnh
+          px, py, tileSize, tileSize // vị trí vẽ
+        );
+        continue;
+      }
+
+      // ===== WALL =====
+      if (map[y][x] === 1) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(px, py, tileSize, tileSize);
+      }
+
+      // ===== DESK =====
+      if (map[y][x] === 2) {
+        ctx.fillStyle = "#E6C9A8";
+        ctx.fillRect(px, py, tileSize, tileSize);
+      }
+
+      // ===== CABINET =====
+      if (map[y][x] === 3) {
+        ctx.fillStyle = "#A89CC8";
+        ctx.fillRect(px, py, tileSize, tileSize);
+      }
+
+      // viền nhẹ
+      ctx.strokeStyle = "rgba(0,0,0,0.1)";
+      ctx.strokeRect(px, py, tileSize, tileSize);
     }
   }
 }
@@ -231,18 +265,8 @@ function gameLoop() {
   draw();
   requestAnimationFrame(gameLoop);
 }
-function drawTile(tileId, x, y) {
-  const TILE = tileSize;
 
-  ctx.drawImage(
-    tileset,
-    tileId * TILE, 0,        // vị trí trong tileset
-    TILE, TILE,              // kích thước tile
-    x * TILE, y * TILE,      // vị trí vẽ lên canvas
-    TILE, TILE
-  );
-}
-
-tileset.onload = () => {
+floorTile.onload = () => {
   gameLoop();
 };
+
