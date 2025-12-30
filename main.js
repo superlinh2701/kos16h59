@@ -28,6 +28,9 @@ const map = [
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+const tileset = new Image();
+tileset.src = "tileset.png";
+
 const UI_HEIGHT = 110;
 
 canvas.width = map[0].length * tileSize;
@@ -159,18 +162,11 @@ function update() {
 function drawMap() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
-      let color = "#EAEAEA";
-      if (map[y][x] === 1) color = "#FFFFFF";
-      if (map[y][x] === 2) color = "#E6C9A8";
-      if (map[y][x] === 3) color = "#A89CC8";
-
-      ctx.fillStyle = color;
-      ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-      ctx.strokeStyle = "rgba(0,0,0,0.1)";
-      ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
+      drawTile(map[y][x], x, y);
     }
   }
 }
+
 
 function drawUI() {
   const y = canvas.height - UI_HEIGHT;
@@ -235,5 +231,18 @@ function gameLoop() {
   draw();
   requestAnimationFrame(gameLoop);
 }
+function drawTile(tileId, x, y) {
+  const TILE = tileSize;
 
-gameLoop();
+  ctx.drawImage(
+    tileset,
+    tileId * TILE, 0,        // vị trí trong tileset
+    TILE, TILE,              // kích thước tile
+    x * TILE, y * TILE,      // vị trí vẽ lên canvas
+    TILE, TILE
+  );
+}
+
+tileset.onload = () => {
+  gameLoop();
+};
