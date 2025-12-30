@@ -10,27 +10,21 @@ const tileSize = 32;
 */
 
 const map = [
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-  [1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,1,1,1,1,1,1,1,1,1],
-  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,1,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,1,0,0,0,0,0,0,0,1],
-  [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,1,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 ];
+
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const UI_HEIGHT = 60;
+const UI_HEIGHT = 110;
 
 canvas.width = map[0].length * tileSize;
 canvas.height = map.length * tileSize + UI_HEIGHT;
@@ -177,21 +171,46 @@ function drawMap() {
 function drawUI() {
   const y = canvas.height - UI_HEIGHT;
 
-  // background
-  ctx.fillStyle = "#1e1e1e";
-  ctx.fillRect(0, y, canvas.width, UI_HEIGHT);
+  // nền khung hội thoại
+  ctx.fillStyle = "#2b2b2b";
+  ctx.fillRect(8, y + 8, canvas.width - 16, UI_HEIGHT - 16);
 
-  // left: message
-  ctx.fillStyle = "#ffd54f";
-  ctx.font = "14px sans-serif";
-  ctx.fillText(message, 12, y + 25);
+  // viền ngoài
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(8, y + 8, canvas.width - 16, UI_HEIGHT - 16);
 
-  // right: controls
-  ctx.fillStyle = "#ffffff";
-  ctx.textAlign = "right";
-  ctx.fillText("← ↑ ↓ → Di chuyển", canvas.width - 10, y + 20);
-  ctx.fillText("E : Tương tác", canvas.width - 10, y + 40);
+  // text
+  ctx.fillStyle = "#f5e9c8";
+  ctx.font = "16px monospace";
   ctx.textAlign = "left";
+  wrapText(message, 20, y + 40, canvas.width - 40, 20);
+
+  // hint
+  ctx.font = "12px monospace";
+  ctx.fillStyle = "#bbbbbb";
+  ctx.textAlign = "right";
+  ctx.fillText("←↑↓→ di chuyển | E tương tác", canvas.width - 20, y + UI_HEIGHT - 20);
+}
+
+function wrapText(text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+
+  for (let i = 0; i < words.length; i++) {
+    const testLine = line + words[i] + " ";
+    const metrics = ctx.measureText(testLine);
+
+    if (metrics.width > maxWidth && i > 0) {
+      ctx.fillText(line, x, y);
+      line = words[i] + " ";
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+
+  ctx.fillText(line, x, y);
 }
 
 function draw() {
