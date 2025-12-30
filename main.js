@@ -44,8 +44,8 @@ const ctx = canvas.getContext("2d");
 
 const UI_HEIGHT = 110;
 
-canvas.width = map[0].length * tileSize;
-canvas.height = map.length * tileSize + UI_HEIGHT;
+canvas.width = collisionMap[0].length * tileSize;
+canvas.height = collisionMap.length * tileSize + UI_HEIGHT;
 
 const player = {
   x: 2 * tileSize,
@@ -136,9 +136,9 @@ function interact() {
   ];
 
   for (let [x, y] of around) {
-    if (!map[y]) continue;
+    if (!collisionMap[y]) continue;
 
-    if (map[y][x] === 3) {
+    if (collisionMap[y][x] === 3) {
       message = "📁 Bạn mở tủ và tìm thấy tài liệu!";
       return;
     }
