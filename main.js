@@ -5,12 +5,13 @@ const tileSize = 32;
 1 = tường
 2 = bàn
 3 = tủ (tương tác)
+4 = NPC
 */
 
 const map = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   [1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -74,7 +75,8 @@ function isWall(x, y) {
     map[bottom][right]
   ];
 
-  return tiles.some(t => t === 1 || t === 2 || t === 3);
+  return tiles.some(t => t === 1 || t === 2 || t === 3 || t === 4);
+
 }
 
 // 🔍 Kiểm tra tương tác
@@ -90,14 +92,22 @@ function interact() {
   ];
 
   for (let [x, y] of around) {
-    if (map[y] && map[y][x] === 3) {
-      message = "📁 Bạn mở tủ và tìm thấy tài liệu quan trọng!";
+    if (!map[y]) continue;
+
+    if (map[y][x] === 3) {
+      message = "📁 Bạn mở tủ và tìm thấy tài liệu!";
+      return;
+    }
+
+    if (map[y][x] === 4) {
+      message = "👋 Hello! Hôm nay bạn ổn chứ?";
       return;
     }
   }
 
-  message = "Không có gì để tương tác ở đây.";
+  message = "Không có gì để tương tác.";
 }
+
 
 function update() {
   let nextX = player.x;
@@ -119,6 +129,7 @@ function drawMap() {
       if (map[y][x] === 1) color = "#FFFFFF";
       if (map[y][x] === 2) color = "#E6C9A8";
       if (map[y][x] === 3) color = "#A89CC8";
+            if (map[y][x] === 4) color = "#4FC3F7";
 
       ctx.fillStyle = color;
       ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
